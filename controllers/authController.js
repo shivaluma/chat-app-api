@@ -29,6 +29,7 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
   const { username, password } = req.body;
   const user = await User.findOne({ username: username });
+
   if (!user) return res.status(404).json({ message: 'User not found' });
   const passwordMatch = bcrypt.compareSync(password, user.password);
 
@@ -36,10 +37,10 @@ exports.login = async (req, res) => {
     return res.status(401).json({ message: 'Password do not match.' });
 
   const payload = { id: user._id, username: user.username };
-  jwt.sign(payload, keys, { expiresIn: 36000 }, (err, token) => {
+  jwt.sign(payload, keys, { expiresIn: 36000 }, (err, token) =>
     res.status(200).json({
       user: payload,
       token: token
-    });
-  });
+    })
+  );
 };

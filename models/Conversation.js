@@ -1,8 +1,14 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+
 const ConversationSchema = new Schema({
-  key: {
-    type: String,
+  firstId: {
+    type: Schema.Types.ObjectId,
+    unique: true,
+    required: true
+  },
+  secondId: {
+    type: Schema.Types.ObjectId,
     unique: true,
     required: true
   },
@@ -12,7 +18,11 @@ const ConversationSchema = new Schema({
       ofUser: Schema.Types.ObjectId,
       time: Date.now
     }
-  ]
+  ],
+  lastUpdate: {
+    type: Date,
+    default: Date.now
+  }
 });
 
 const Conversation = mongoose.model('Conversation', ConversationSchema);
