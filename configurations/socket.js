@@ -1,11 +1,12 @@
 const User = require('../models/User');
 
-module.exports = socket => {
-  socket.on('connection', socket => {
+module.exports = io => {
+  io.on('connection', socket => {
     console.log('User has connect');
     socket.on('disconnect', _ => {
       console.log('User disconnected');
       socket.emit('user-disconnect');
+      socket.disconnect();
     });
 
     socket.on('user-login', uid => {
