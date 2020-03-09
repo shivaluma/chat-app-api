@@ -1,8 +1,9 @@
 require('dotenv').config();
 
 const express = require('express');
+
 const socketio = require('socket.io');
-const http = require('http');
+
 const mongoose = require('mongoose');
 const cors = require('cors');
 const passport = require('passport');
@@ -37,10 +38,9 @@ mongoose
   .then(() => console.log('Database Connected'))
   .catch(err => console.log(err));
 
-const server = http.Server(app);
-const io = socketio(server);
-require('./configurations/socket')(io);
-
-server.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);
 });
+
+const io = socketio(server);
+require('./configurations/socket')(io);

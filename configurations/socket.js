@@ -28,5 +28,11 @@ module.exports = socket => {
       console.log(`A user joined chat-${roomId}`);
       socket.join(`chat-${roomId}`);
     });
+
+    socket.on('user-send-message', conversation => {
+      socket
+        .to(`chat-${conversation._id}`)
+        .emit('receive-message', conversation);
+    });
   });
 };
