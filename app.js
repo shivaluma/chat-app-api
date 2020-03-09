@@ -39,10 +39,7 @@ mongoose
 
 const server = http.Server(app);
 const io = socketio(server);
-
-io.on('connection', () => {
-  console.log('A user connected');
-});
+require('./configurations/socket')(io);
 
 server.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);
