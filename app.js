@@ -42,5 +42,5 @@ const server = app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);
 });
 
-const io = socketio(server);
+const io = socketio(server, { pingTimeout: 60000 });
 require('./configurations/socket')(io);
