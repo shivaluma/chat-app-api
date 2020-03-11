@@ -9,6 +9,7 @@ router.post('/register', AuthController.register);
 router.post('/login', AuthController.login);
 router.get('/search', authenticate, chatController.findPeople);
 router.get('/conversation', authenticate, chatController.getConversation);
+router.get('/get-messages', authenticate, chatController.getMessages);
 router.get(
   '/conversation-list',
   authenticate,

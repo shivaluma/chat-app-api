@@ -44,9 +44,20 @@ exports.getConversationList = async (req, res) => {
   const listConversation = await Conversation.find({
     $or: [{ firstId: id }, { secondId: id }],
     $and: [{ lastMessage: { $ne: '' } }]
-  }).sort({ lastUpdate: -1 });
+  })
+    .select('-messages')
+    .sort({ lastUpdate: -1 });
   if (listConversation) return res.status(200).json({ list: listConversation });
   return res.status(200).json({ list: [] });
+};
+
+exports.getMessages = async (req, res) => {
+  const { cid } = req.query;
+  if (!cid) return res.status(400).json({ message: 'Missing conversation id' });
+  const conversation = await Conversation.findById(cid);
+  if (!conversation)
+    res.status(404).json({ message: 'Cannot find conversation' });
+  return res.status(200).json({ messageList: conversation.messages });
 };
 
 exports.sendMessage = async (req, res) => {
@@ -56,10 +67,16 @@ exports.sendMessage = async (req, res) => {
   const conversation = await Conversation.findById(cid);
   if (!conversation)
     res.status(404).json({ message: 'Cannot find conversation' });
-  conversation.messages.push({ ofUser: uid, content: content });
+  const currentTime = Date.now();
+
+  conversation.messages.push({
+    ofUser: uid,
+    content: content,
+    time: currentTime
+  });
   conversation.lastMessage = content;
   conversation.lastSender = username;
-  conversation.lastUpdate = Date.now();
+  conversation.lastUpdate = currentTime;
   conversation.save((err, cv) => {
     if (err) {
       console.log(err);
@@ -67,8 +84,11 @@ exports.sendMessage = async (req, res) => {
         .status(500)
         .json({ message: 'Server error when add new message' });
     }
+    const newMessage = cv.messages[conversation.messages.length - 1];
+    conversation.messages = undefined;
     return res.status(200).json({
       message: 'Add new message successfully',
+      newMessage: newMessage,
       conversation: conversation
     });
   });

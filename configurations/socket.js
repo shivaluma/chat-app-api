@@ -34,10 +34,13 @@ module.exports = io => {
       socket.join(`chat-${roomId}`);
     });
 
-    socket.on('user-send-message', conversation => {
+    socket.on('user-send-message', ({ conversation, newMessage }) => {
       socket
         .to(`chat-${conversation._id}`)
-        .emit('receive-message', conversation);
+        .emit('receive-message', {
+          conversation: conversation,
+          newMessage: newMessage
+        });
     });
 
     socket.on('user-typing-message', ({ cid, uid, isTyping, name }) => {
